@@ -1,0 +1,10 @@
+service: todo-list
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+
+functions:
+  todo-list:
+    handler: handler.todo

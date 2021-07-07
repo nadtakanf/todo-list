@@ -22,13 +22,16 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-          
+        
       - name: install
         run: npm install
+
+      - name: install serverless framework
+        run: npm i serverless -g
 
       # - name: test
       #   run: npm test
       
       - name: deploy
-        run: sls deploy -v --stage qa
+        run: sls deploy -v --stage prod
         

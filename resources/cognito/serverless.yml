@@ -1,0 +1,73 @@
+service: todo-list-cognito
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  profile: nadtakan
+  stage: ${opt:stage, "dev"}
+  region: ${opt:region, "us-west-2"}
+
+resources:
+  Resources:
+    CognitoUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: ${self:service}-${self:provider.stage}-user-pool
+        AliasAttributes:
+          - email
+        AutoVerifiedAttributes:
+          - email
+        Schema:
+          - Name: email
+            AttributeDataType: String
+            Mutable: true
+            Required: true
+
+    CognitoUserPoolClientWeb:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: ${self:provider.stage}-user-pool-client-web
+        UserPoolId:
+          Ref: CognitoUserPool
+        GenerateSecret: false
+        ReadAttributes: 
+          - address
+          - email
+          - phone_number
+          - profile
+          - gender
+
+    CognitoUserPoolClientServer:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: ${self:provider.stage}-user-pool-client-server
+        UserPoolId:
+          Ref: CognitoUserPool
+        ExplicitAuthFlows:
+          - ADMIN_NO_SRP_AUTH
+        GenerateSecret: false
+        ReadAttributes: 
+          - address
+          - email
+          - phone_number
+          - profile
+          - gender
+
+  Outputs:
+    UserPoolId:
+      Value:
+        Ref: CognitoUserPool
+      Export:
+          Name: ${self:service}-${self:provider.stage}-UserPoolId
+
+    UserPoolClientWebId:
+      Value:
+        Ref: CognitoUserPoolClientWeb
+      Export:
+          Name: ${self:service}-${self:provider.stage}-UserPoolClientWebId
+
+    UserPoolClientServerId:
+      Value:
+        Ref: CognitoUserPoolClientServer
+      Export:
+          Name: ${self:service}-${self:provider.stage}-UserPoolClientServerId

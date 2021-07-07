@@ -1,0 +1,53 @@
+service: todo-list-sqs
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  profile: nadtakan
+  stage: ${opt:stage, "dev"}
+  region: ${opt:region, "us-west-2"}
+
+resources:
+  Resources:
+    TodoQueue:
+      Type: AWS::SQS::Queue
+      Properties: 
+        QueueName: ${self:service}-queue
+        VisibilityTimeout: 30
+        RedrivePolicy:
+          deadLetterTargetArn:
+            "Fn::GetAtt": [TodoDeadQueue, Arn]
+          maxReceiveCount: 5
+        Tags: 
+          - Key: Name
+            Value: ${self:service}-${self:provider.stage}
+    
+    TodoDeadQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-dead
+  
+  Outputs:
+    SourceQueueURL: 
+      Description: "URL of source queue"
+      Value: 
+        Ref: TodoQueue
+
+    SourceQueueARN: 
+      Description: "ARN of source queue"
+      Value: 
+        Fn::GetAtt: 
+          - TodoQueue
+          - Arn
+          
+    DeadLetterQueueURL: 
+      Description: "URL of dead-letter queue"
+      Value: 
+        Ref: TodoDeadQueue
+
+    DeadLetterQueueARN: 
+      Description: "ARN of dead-letter queue"
+      Value: 
+        Fn::GetAtt: 
+          - MyDeadLetterQueue
+          - Arn

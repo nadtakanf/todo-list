@@ -7,17 +7,18 @@ provider:
   profile: nadtakan
   stage: ${opt:stage, "dev"}
   region: ${opt:region, "us-west-1"}
+  logs:
+    restApi: true
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - dynamodb:DescribeTable
         - dynamodb:Query
         - dynamodb:Scan
         - dynamodb:GetItem
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      Resource: arn:aws:dynamodb:us-west-1:*:*
+      Resource: !Sub arn:aws:dynamodb:${AWS::Region:${AWS::AccountId}:table/${self:custom.tableName}
 
 package:
   individually: true
@@ -34,26 +35,26 @@ functions:
           path: /create
           method: post
 
-  todo-update:
-    handler: update.handler
-    events:
-      - http:
-          path: /update/{id}
-          method: put
+  # todo-update:
+  #   handler: update.handler
+  #   events:
+  #     - http:
+  #         path: /update/{id}
+  #         method: put
 
-  todo-delete:
-    handler: delete.handler
-    events:
-      - http:
-          path: /update/{id}
-          method: delete
+  # todo-delete:
+  #   handler: delete.handler
+  #   events:
+  #     - http:
+  #         path: /delete/{id}
+  #         method: delete
   
-  todo-list:
-    handler: search.handler
-    events:
-      - http:
-          path: /update/{id}
-          method: delete
+  # todo-search:
+  #   handler: search.handler
+  #   events:
+  #     - http:
+  #         path: /search
+  #         method: get
 
 plugins:
   - serverless-webpack

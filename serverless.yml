@@ -3,7 +3,7 @@ frameworkVersion: '2'
 
 provider:
   name: aws
-  runtime: nodejs14.x
+  runtime: nodejs12.x
   profile: nadtakan
   stage: ${opt:stage, "dev"}
   region: ${opt:region, "us-west-1"}
@@ -18,7 +18,7 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      Resource: !Sub arn:aws:dynamodb:${AWS::Region:${AWS::AccountId}:table/${self:custom.tableName}
+      Resource: !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${self:custom.tableName}
 
 package:
   individually: true
@@ -29,7 +29,7 @@ custom:
 
 functions:
   todo-create:
-    handler: create.handler
+    handler: src/create.handler
     events:
       - http:
           path: /create

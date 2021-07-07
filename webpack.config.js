@@ -1,5 +1,4 @@
 const slsw = require('serverless-webpack');
-const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   target: 'node',

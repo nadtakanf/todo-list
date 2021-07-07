@@ -1,9 +1,9 @@
-name: Production Deployment
+name: QA Deployment
 
 on:
   push:
     branches: 
-      - master
+      - develop
 
 jobs:
   deploy:
@@ -30,5 +30,5 @@ jobs:
         run: npm test
       
       - name: deploy
-        run: sls deploy -v --stage prod
+        run: sls deploy -v --stage dev
         

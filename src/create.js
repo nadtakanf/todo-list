@@ -1,28 +1,25 @@
 'use strict';
 const eventbridge = require('../helper/eventbridge');
+const log = require('lambda-log');
+const { DynamoDBClient, PutItemCommand } = require("@aws-sdk/client-dynamodb")
+const ddbClient = new DynamoDBClient({ region: process.env.REGION })  
+const util = require('../helper/util') 
+const response = require('../helper/response-lib')
 
 module.exports.handler = async event => {
-    let err = null;
+
 	try {
-        await eventbridge.sendToEventBridge(process.env.EVENT_BRIDGE, event);
+        const { body } = event;
+        const params = util.formatTask(JSON.parse(body))
+        const command = new PutItemCommand(params);
+        const metadata = await ddbClient.send(command); 
+
+        // await eventbridge.sendToEventBridge(process.env.EVENT_BRIDGE, event);
+
+        return response.success(metadata.$metadata.httpStatusCode)
+
     } catch (err) {
         log.error(`error ${err}`);
         // await sns.notifyFailure(err.errorMessage);
 	}
-	
-	// const statusCode = err ? 500 : 200
-	// const response = {
-	// 	statusCode: statusCode,
-	// 	headers: {
-	// 		"Access-Control-Allow-Origin": "*",
-	// 		"Access-Control-Allow-Credentials": true
-	// 	},
-	// 	body: JSON.stringify(
-	// 	{
-	// 		statusCode: statusCode,
-	// 	}
-	// ),
-	// };
-  
-    // return response
 };

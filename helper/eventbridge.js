@@ -1,20 +1,20 @@
 const AWS = require('aws-sdk');
+const log = require('lambda-log');
 
-const eventBridge = new AWS.EventBridge({ region: 'us-east-1', apiVersion: '2015-10-07'});
+const eventBridge = new AWS.EventBridge({ region: process.env.REGION, apiVersion: '2015-10-07'});
 
 module.exports = {
     sendToEventBridge : async (bridgeName, event) => {
-        const { id, type } = event;
-        console.log(event);
+        const { requestId } = event.requestContext;
 
-        console.log(`Sending event ${id} of type ${type} to the ${bridgeName} event bus on AWS EventBridge`);
+        log.info(`Sending requestId ${requestId} to the ${bridgeName} event bus on AWS EventBridge`);
         const params = {
         Entries: [
             {
             Detail: JSON.stringify(event),
-            DetailType: 'placing.order',
+            DetailType: 'dynamodb-crud',
             EventBusName: 'default',
-            Source: 'Orders',
+            Source: 'Todo',
             Time: new Date()
             }
         ]

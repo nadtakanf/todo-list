@@ -1,5 +1,4 @@
 service: todo-list
-frameworkVersion: '2'
 
 provider:
   name: aws
@@ -8,19 +7,34 @@ provider:
   region: ${opt:region, "us-west-1"}
   logs:
     restApi: true
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-        - dynamodb:Scan
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-      Resource: !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${self:custom.tableName}
+  lambdaHashingVersion: 20201221
+  environment:
+    REGION: ${self:provider.region}
+    tableName: ${self:custom.tableName}
+  # eventBridge:
+  #   useCloudFormation: true
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:BatchWriteItem
+          Resource: !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${self:custom.tableName}
+        - Effect: Allow
+          Action: 
+            - events:PutEvents
+            - events:listEventBuses
+          Resource: !Sub arn:aws:events:${AWS::Region}:${AWS::AccountId}:event-bus/*
 
 package:
-  individually: true
+  patterns:
+    - '!resources/**'
 
 custom:
   tableName: todo-list-${self:provider.stage}
@@ -32,7 +46,19 @@ functions:
     events:
       - http:
           path: /create
-          method: post
+          method: POST
+    environment:
+      EVENT_BRIDGE: "default"
+  
+  dynamodb-crud:
+    handler: src/dynamodb-crud.handler
+    events:
+      - eventBridge:
+          pattern:
+            source: # rule
+              - Todo
+            detail-type:
+              - dynamodb-crud
 
   # todo-update:
   #   handler: update.handler

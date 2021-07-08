@@ -6,9 +6,6 @@ const log = require('lambda-log');
 
 util.formatTask = ((task) => {
 
-    log.info(task)
-    log.info(typeof task)
-
     return {
         TableName: tableName,
         Item: {

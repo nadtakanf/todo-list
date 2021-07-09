@@ -4,8 +4,11 @@ const util = {}
 const tableName = process.env.tableName;
 const log = require('lambda-log');
 
+/**
+ * Returns task format object
+ * @param {Object} task task to reformat
+ */
 util.formatTask = ((task) => {
-
     return {
         TableName: tableName,
         Item: {
@@ -15,7 +18,7 @@ util.formatTask = ((task) => {
             description: { S: task.description },
             status: { S: task.status },
             dueDate: { S: task.dueDate },
-            user: { S: "User1" }
+            user: { S: "User1" } // TODO: replace this with cognito user email
         }
     };
     
@@ -46,15 +49,12 @@ function getMatches(string, pattern) {
 util.matchPathElements = (path, pathPattern) => {
     // find all match tokens
     const tokens = getMatches(pathPattern, '{([^}]+)}');
-    log.info(tokens);
 
     // convert {token}s into (.*) to create a regex pattern
     const pattern = pathPattern.replace(/{[^}]+}/g, '(.*)');
-    log.info(pattern);
 
     // try to match against the pattern
     const match = path.match(new RegExp(pattern));
-    log.info(match)
     
     if (!match) {
       return null;

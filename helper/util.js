@@ -8,18 +8,18 @@ const log = require('lambda-log');
  * Returns task format object
  * @param {Object} task task to reformat
  */
-util.formatTask = ((task) => {
+util.formatItem = ((task) => {
     return {
         TableName: tableName,
         Item: {
-            PK: { S : "USER#1111" },
-            SK: { S: "TYPE#ITEM1" },
+            PK: { S : `USER#${task.id}` },
+            SK: { S: `TYPE#ITEM` },
             title: { S: task.title },
             description: { S: task.description },
-            status: { S: task.status },
+            itemStatus: { S: task.itemStatus },
             dueDate: { S: task.dueDate },
-            user: { S: "User1" } ,// TODO: replace this with cognito user email
-            createdAt: { N: Date.now() }
+            user: { S: `User1` } ,// TODO: replace this with cognito user email
+            createdAt: { S: Date.now().toString() }
         }
     };
     

@@ -1,26 +1,31 @@
 'use strict';
 const log = require('lambda-log')
 const { DynamoDBClient, UpdateItemCommand } = require("@aws-sdk/client-dynamodb")
-const ddbClient = new DynamoDBClient({ region: process.env.REGION }) 
+const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb")
+const ddbClient = new DynamoDBClient({ region: process.env.REGION })
+const util = require('../helper/util')
 
-module.exports.handler = async event => {
+module.exports.handler = async even => {
+    console.log(event)
     try {
-        const { body } = event.detail;
+        const body = JSON.parse(event.detail.body);
+        const idObject = util.matchPathElements(event.detail.path, '/update/{id}')
         const params = {
             TableName: process.env.tableName,
             Key: {
-                PK: `USER#111`,
-                SK: `TYPE#TASK`
+                PK: { S: `USER#${idObject.id}` },
+                SK: { S: `TYPE#ITEM` }
             },
-            UpdateExpression: "SET title = :title, description = :description, status = :status, dueDate = :dueDate",
+            UpdateExpression: "SET title = :title, description = :description, itemStatus = :itemStatus, dueDate = :dueDate",
             ExpressionAttributeValues: {
-                ":title": body.title || null,
-                ":description": body.description || null,
-                ":status": body.status || null,
-                ":dueDate": body.dueDate || null
+                ":title": { S: body.title },
+                ":description": { S: body.description },
+                ":itemStatus": { S: body.itemStatus },
+                ":dueDate": { S: body.dueDate }
             },
-            ReturnValues: "ALL_NEW"
+            ReturnValues: "UPDATED_NEW",
         };
+        console.log(params)
         const command = new UpdateItemCommand(params);
         const response = await ddbClient.send(command);
         log.info(response);

@@ -35,6 +35,7 @@ provider:
 package:
   patterns:
     - '!resources/**'
+    - '!mocks/**'
 
 custom:
   tableName: todo-list-${self:provider.stage}

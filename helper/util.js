@@ -18,7 +18,8 @@ util.formatTask = ((task) => {
             description: { S: task.description },
             status: { S: task.status },
             dueDate: { S: task.dueDate },
-            user: { S: "User1" } // TODO: replace this with cognito user email
+            user: { S: "User1" } ,// TODO: replace this with cognito user email
+            createdAt: { N: Date.now() }
         }
     };
     

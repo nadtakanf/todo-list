@@ -41,45 +41,54 @@ custom:
   todoCognitoName: ${self:service}-cognito
 
 functions:
-  todo-create:
-    handler: src/create.handler
+  catch-all:
+    handler: src/catch-all.handler
     events:
       - http:
-          path: /create
-          method: POST
+          path: /{any+} # this matches any path, the token 'any' doesn't mean anything special
+          method: ANY
     environment:
       EVENT_BRIDGE: "default"
   
-  dynamodb-crud:
-    handler: src/dynamodb-crud.handler
+  todo-create:
+    handler: src/create.handler
     events:
       - eventBridge:
           pattern:
             source: # rule
-              - Todo
+              - source.events
             detail-type:
-              - dynamodb-crud
+              - create
 
-  # todo-update:
-  #   handler: update.handler
-  #   events:
-  #     - http:
-  #         path: /update/{id}
-  #         method: put
+  todo-update:
+    handler: src/update.handler
+    events:
+      - eventBridge:
+          pattern:
+            source: # rule
+              - source.events
+            detail-type:
+              - update
 
-  # todo-delete:
-  #   handler: delete.handler
-  #   events:
-  #     - http:
-  #         path: /delete/{id}
-  #         method: delete
+  todo-delete:
+    handler: src/delete.handler
+    events:
+      - eventBridge:
+          pattern:
+            source: # rule
+              - source.events
+            detail-type:
+              - delete
   
-  # todo-search:
-  #   handler: search.handler
-  #   events:
-  #     - http:
-  #         path: /search
-  #         method: get
+  todo-search:
+    handler: src/search.handler
+    events:
+      - eventBridge:
+          pattern:
+            source: # rule
+              - source.events
+            detail-type:
+              - search
 
 plugins:
   - serverless-webpack

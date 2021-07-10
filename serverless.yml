@@ -11,9 +11,8 @@ provider:
   environment:
     REGION: ${self:provider.region}
     FAILURE_SNS: 
+      Fn::ImportValue: ${self:custom.todoSnsStack}:${self:provider.stage}:SNSTargetNotifyForFailedEvents
     TABLE_NAME: ${self:custom.tableName}
-  # eventBridge:
-  #   useCloudFormation: true
   iam:
     role:
       statements:
@@ -41,6 +40,7 @@ package:
 custom:
   tableName: todo-list-${self:provider.stage}
   todoCognitoName: ${self:service}-cognito
+  todoSnsStack: todo-list-sns-${self:provider.stage}
 
 functions:
   catch-all:

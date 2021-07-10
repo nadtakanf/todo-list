@@ -1,7 +1,7 @@
 'use strict';
 
 const util = {}
-const tableName = process.env.tableName;
+const tableName = process.env.TABLE_NAME;
 const log = require('lambda-log');
 
 /**

@@ -14,7 +14,6 @@ module.exports.handler = async event => {
         const metadata = await ddbClient.send(command); 
         return response.success(metadata.$metadata.httpStatusCode)
     } catch (err) {
-        log.error(`error ${err}`);
-        // await sns.notifyFailure(err.errorMessage);
+        await sns.notifyFailure(err.errorMessage);
 	}
 };

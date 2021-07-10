@@ -10,7 +10,8 @@ provider:
   lambdaHashingVersion: 20201221
   environment:
     REGION: ${self:provider.region}
-    tableName: ${self:custom.tableName}
+    FAILURE_SNS: 
+    TABLE_NAME: ${self:custom.tableName}
   # eventBridge:
   #   useCloudFormation: true
   iam:

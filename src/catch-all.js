@@ -8,7 +8,7 @@ module.exports.handler = async event => {
         await eventbridge.sendToEventBridge(process.env.EVENT_BRIDGE, event);
     } catch (err) {
         log.error(`error ${err}`);
-        // await sns.notifyFailure(err.errorMessage);
+        await sns.notifyFailure(err.errorMessage);
 	}
 	
 	const statusCode = err ? 500 : 200

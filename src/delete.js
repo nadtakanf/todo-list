@@ -16,13 +16,13 @@ module.exports.handler = async event => {
                     S: `TYPE#ITEM1`
                 }
             }, 
-            TableName: process.env.tableName
+            TableName: process.env.TABLE_NAME
         }
     
         const command = new DeleteItemCommand(params)
         const metadata = await ddbClient.send(command)
         log.info(metadata)
     } catch (err) {
-        log.error(`error ${err}`)
+        await sns.notifyFailure(err.errorMessage);
     }
 };

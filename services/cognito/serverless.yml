@@ -3,7 +3,6 @@ frameworkVersion: '2'
 
 provider:
   name: aws
-  profile: nadtakan
   stage: ${opt:stage, "dev"}
   region: ${opt:region, "us-west-1"}
 

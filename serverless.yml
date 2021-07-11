@@ -45,14 +45,14 @@ custom:
 
 functions:
   catch-all:
-    handler: src/catch-all.handler
+    handler: src/hanlders/catch-all.handler
     events:
       - http:
           path: /{any+} # this matches any path, the token 'any' doesn't mean anything special
           method: ANY      
   
   todo-create:
-    handler: src/create.handler
+    handler: src/hanlders/create.handler
     events:
       - eventBridge:
           pattern:
@@ -62,7 +62,7 @@ functions:
               - create
 
   todo-update:
-    handler: src/update.handler
+    handler: src/hanlders/update.handler
     events:
       - eventBridge:
           pattern:
@@ -72,7 +72,7 @@ functions:
               - update
 
   todo-delete:
-    handler: src/delete.handler
+    handler: src/hanlders/delete.handler
     events:
       - eventBridge:
           pattern:
@@ -82,7 +82,7 @@ functions:
               - delete
   
   todo-search:
-    handler: src/search.handler
+    handler: src/hanlders/search.handler
     events:
       - eventBridge:
           pattern:

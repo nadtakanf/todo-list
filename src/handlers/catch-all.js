@@ -1,6 +1,6 @@
 'use strict';
-const eventbridge = require('./helper/eventbridge');
-const response = require('./helper/response-lib');
+const eventbridge = require('../helper/eventbridge');
+const response = require('../helper/response-lib');
 
 module.exports.handler = async event => {
     let err = null;

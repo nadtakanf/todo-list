@@ -1,7 +1,7 @@
 'use strict';
 const { DynamoDBClient, DeleteItemCommand } = require("@aws-sdk/client-dynamodb")
 const client = new DynamoDBClient({ region: process.env.REGION })  
-const util = require('../helper/util')
+const util = require('./helper/util')
 
 module.exports.handler = async event => { 
     try {

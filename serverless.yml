@@ -14,6 +14,8 @@ provider:
       Fn::ImportValue: ${self:custom.todoSnsStack}:${self:provider.stage}:SNSTargetNotifyForFailedEvents
     TABLE_NAME: ${self:custom.tableName}
     EVENT_BRIDGE: "default"
+    COGNITO_ARN: 
+      Fn::ImportValue: todo-list-cognito:dev:UserPoolArn
   iam:
     role:
       statements:
@@ -25,7 +27,6 @@ provider:
             - dynamodb:PutItem
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
-            - dynamodb:BatchWriteItem
           Resource: !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${self:custom.tableName}
         - Effect: Allow
           Action: 
@@ -41,18 +42,20 @@ package:
 custom:
   tableName: todo-list-${self:provider.stage}
   todoCognitoName: ${self:service}-cognito
-  todoSnsStack: todo-list-sns-${self:provider.stage}
+  todoSnsStack: todo-list-sns       
 
 functions:
   catch-all:
-    handler: src/hanlders/catch-all.handler
+    handler: src/handlers/catch-all.handler
     events:
       - http:
           path: /{any+} # this matches any path, the token 'any' doesn't mean anything special
-          method: ANY      
+          method: ANY     
+          authorizer: 
+            arn: arn:aws:cognito-idp:us-west-1:844978381282:userpool/us-west-1_Tmd1WMbrJ
   
   todo-create:
-    handler: src/hanlders/create.handler
+    handler: src/handlers/create.handler
     events:
       - eventBridge:
           pattern:
@@ -62,7 +65,7 @@ functions:
               - create
 
   todo-update:
-    handler: src/hanlders/update.handler
+    handler: src/handlers/update.handler
     events:
       - eventBridge:
           pattern:
@@ -72,7 +75,7 @@ functions:
               - update
 
   todo-delete:
-    handler: src/hanlders/delete.handler
+    handler: src/handlers/delete.handler
     events:
       - eventBridge:
           pattern:
@@ -82,7 +85,7 @@ functions:
               - delete
   
   todo-search:
-    handler: src/hanlders/search.handler
+    handler: src/handlers/search.handler
     events:
       - eventBridge:
           pattern:

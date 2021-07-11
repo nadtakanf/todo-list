@@ -1,6 +1,6 @@
-import { EventBridgeClient, PutEventsCommand } from "@aws-sdk/client-eventbridge";
+const { EventBridgeClient, PutEventsCommand } = require("@aws-sdk/client-eventbridge");
 const client = new EventBridgeClient({ region: process.env.REGION });
-const util = require('./util');
+const util = require('../helper/util');
 
 module.exports = {
     sendToEventBridge : async (bridgeName, event) => {

@@ -2,8 +2,8 @@
 const log = require('lambda-log');
 const { DynamoDBClient, PutItemCommand } = require("@aws-sdk/client-dynamodb")
 const client = new DynamoDBClient({ region: process.env.REGION })  
-const util = require('./helper/util') 
-const response = require('./helper/response-lib')
+const util = require('../helper/util') 
+const response = require('../helper/response-lib')
 
 module.exports.handler = async event => {
 	try {

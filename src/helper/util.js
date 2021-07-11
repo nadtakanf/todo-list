@@ -2,8 +2,7 @@
 
 const util = {}
 const tableName = process.env.TABLE_NAME;
-const log = require('lambda-log');
-
+const ulid = require('ulid')
 /**
  * Returns task format object
  * @param {Object} task task to reformat
@@ -12,8 +11,8 @@ util.formatItem = ((task) => {
     return {
         TableName: tableName,
         Item: {
-            PK: { S : `USER#${task.id}` },
-            SK: { S: `TYPE#ITEM` },
+            PK: { S : `USER#nadtakan.futhoem` },
+            SK: { S: `ITEM#${ulid.ulid()}` },
             title: { S: task.title },
             description: { S: task.description },
             itemStatus: { S: task.itemStatus },

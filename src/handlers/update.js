@@ -1,7 +1,7 @@
 'use strict';
 const { DynamoDBClient, UpdateItemCommand } = require("@aws-sdk/client-dynamodb")
 const ddbClient = new DynamoDBClient({ region: process.env.REGION })
-const util = require('./helper/util')
+const util = require('../helper/util')
 
 module.exports.handler = async event => {
     try {

@@ -1,7 +1,6 @@
 'use strict';
-const log = require('lambda-log');
 const { DynamoDBClient, DeleteItemCommand } = require("@aws-sdk/client-dynamodb")
-const ddbClient = new DynamoDBClient({ region: process.env.REGION })  
+const client = new DynamoDBClient({ region: process.env.REGION })  
 const util = require('../helper/util')
 
 module.exports.handler = async event => { 
@@ -20,8 +19,7 @@ module.exports.handler = async event => {
         }
     
         const command = new DeleteItemCommand(params)
-        const metadata = await ddbClient.send(command)
-        log.info(metadata)
+        await client.send(command)
     } catch (err) {
         await sns.notifyFailure(err.errorMessage);
     }

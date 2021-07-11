@@ -13,6 +13,7 @@ provider:
     FAILURE_SNS: 
       Fn::ImportValue: ${self:custom.todoSnsStack}:${self:provider.stage}:SNSTargetNotifyForFailedEvents
     TABLE_NAME: ${self:custom.tableName}
+    EVENT_BRIDGE: "default"
   iam:
     role:
       statements:
@@ -48,9 +49,7 @@ functions:
     events:
       - http:
           path: /{any+} # this matches any path, the token 'any' doesn't mean anything special
-          method: ANY
-    environment:
-      EVENT_BRIDGE: "default"
+          method: ANY      
   
   todo-create:
     handler: src/create.handler

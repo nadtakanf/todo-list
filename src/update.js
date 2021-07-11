@@ -1,10 +1,9 @@
 'use strict';
-const log = require('lambda-log')
 const { DynamoDBClient, UpdateItemCommand } = require("@aws-sdk/client-dynamodb")
 const ddbClient = new DynamoDBClient({ region: process.env.REGION })
 const util = require('../helper/util')
 
-module.exports.handler = async even => {
+module.exports.handler = async event => {
     try {
         const body = JSON.parse(event.detail.body);
         const idObject = util.matchPathElements(event.detail.path, '/update/{id}')
@@ -23,10 +22,8 @@ module.exports.handler = async even => {
             },
             ReturnValues: "UPDATED_NEW",
         };
-        console.log(params)
         const command = new UpdateItemCommand(params);
-        const response = await ddbClient.send(command);
-        log.info(response);
+        await ddbClient.send(command);
     } catch (err) {
         await sns.notifyFailure(err.errorMessage);
     }

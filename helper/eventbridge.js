@@ -1,13 +1,9 @@
-const AWS = require('aws-sdk');
-const log = require('lambda-log');
+import { EventBridgeClient, PutEventsCommand } from "@aws-sdk/client-eventbridge";
+const client = new EventBridgeClient({ region: process.env.REGION });
 const util = require('./util');
-const eventBridge = new AWS.EventBridge({ region: process.env.REGION, apiVersion: '2015-10-07'});
 
 module.exports = {
     sendToEventBridge : async (bridgeName, event) => {
-        log.info(event)
-
-        const { requestId } = event.requestContext;
         const { path, httpMethod } = event;
 
         // set default to api/create
@@ -22,22 +18,19 @@ module.exports = {
             detailType = 'search'
         }
 
-        log.info(`Sending requestId ${requestId} to the ${bridgeName} event bus on AWS EventBridge`);
         const params = {
         Entries: [
             {
-            Detail: JSON.stringify(event),
-            DetailType: detailType,
-            EventBusName: 'default',
-            Source: 'source.events',
-            Time: new Date()
+                Detail: JSON.stringify(event),
+                DetailType: detailType,
+                EventBusName: process.env.EVENT_BRIDGE,
+                Source: 'source.events',
+                Time: new Date()
             }
         ]
         };
-
-        log.info(params)
-
-        let result = await eventBridge.putEvents(params).promise()
-        return result
+        
+        const command = new PutEventsCommand(params);
+        return await client.send(command);
     }
 };

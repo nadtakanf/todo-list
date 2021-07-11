@@ -1,4 +1,4 @@
-service: todo-list-cognito
+service: todo-list-cognito-userpool
 frameworkVersion: '2'
 
 provider:
@@ -29,44 +29,20 @@ resources:
         UserPoolId:
           Ref: CognitoUserPool
         GenerateSecret: false
-        ReadAttributes: 
-          - address
-          - email
-          - phone_number
-          - profile
-          - gender
-
-    CognitoUserPoolClientServer:
-      Type: AWS::Cognito::UserPoolClient
-      Properties:
-        ClientName: ${self:provider.stage}-user-pool-client-server
-        UserPoolId:
-          Ref: CognitoUserPool
         ExplicitAuthFlows:
           - ADMIN_NO_SRP_AUTH
-        GenerateSecret: false
-        ReadAttributes: 
-          - address
-          - email
-          - phone_number
-          - profile
-          - gender
 
   Outputs:
     UserPoolId:
       Value:
         Ref: CognitoUserPool
       Export:
-          Name: ${self:service}-${self:provider.stage}-UserPoolId
-
-    UserPoolClientWebId:
-      Value:
-        Ref: CognitoUserPoolClientWeb
+          Name: ${self:service}:${self:provider.stage}:UserPoolId
+    
+    UserPoolArn:
+      Value: 
+        Fn::GetAtt:
+          - CognitoUserPool
+          - Arn
       Export:
-          Name: ${self:service}-${self:provider.stage}-UserPoolClientWebId
-
-    UserPoolClientServerId:
-      Value:
-        Ref: CognitoUserPoolClientServer
-      Export:
-          Name: ${self:service}-${self:provider.stage}-UserPoolClientServerId
+        Name: ${self:service}:${self:provider.stage}:UserPoolArn

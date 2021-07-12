@@ -11,10 +11,10 @@ provider:
   environment:
     REGION: ${self:provider.region}
     FAILURE_SNS: 
-      Fn::ImportValue: ${self:custom.todoSnsStack}:${self:provider.stage}:SNSTargetNotifyForFailedEvents
-    TABLE_NAME: ${self:custom.tableName}
+      Fn::ImportValue: ${self:custom.sns.todoSnsStack}:${self:provider.stage}:SNSTargetNotifyForFailedEvents
+    TABLE_NAME: ${self:custom.dynamodb.tableName}
     EVENT_BRIDGE: "default"
-    COGNITO_ARN: ${self:custom.todoCognitoArn}
+    COGNITO_ARN: ${self:custom.sns.}
   iam:
     role:
       statements:
@@ -46,11 +46,14 @@ package:
     - '!mocks/**'
 
 custom:
-  tableName: todo-list-${self:provider.stage}
-  todoCognitoName: ${self:service}-cognito-userpool
-  todoSnsStack: todo-list-sns     
-  todoCognitoArn:
-    Fn::ImportValue: ${self:custom.todoCognitoName}:${self:provider.stage}:UserPoolArn
+  dynamodb:
+    tableName: todo-list-${self:provider.stage}
+  cognito:
+    todoCognitoName: ${self:service}-cognito-userpool
+    todoCognitoClientId: ${file(./temp.yml):COGNITO_CLIENT_ID}
+    todoUserPoolId: ${file(./temp.yml):COGNITO_USER_POOL_ID}
+  sns:
+    todoSnsStack: todo-list-sns     
 
 functions:
   catch-all:
@@ -60,7 +63,7 @@ functions:
           path: /{any+} # this matches any path, the token 'any' doesn't mean anything special
           method: ANY     
           authorizer: 
-            arn: arn:aws:cognito-idp:us-west-1:844978381282:userpool/us-west-1_Tmd1WMbrJ	
+            arn: arn:aws:cognito-idp:us-west-1:844978381282:userpool/${self:custom.cognito.todoUserPoolId}
   
   todo-create:
     handler: src/handlers/create.handler

@@ -13,8 +13,7 @@ module.exports.notifyFailure = async (message) => {
       }
 
       const command = new PublishCommand(params);
-      const response = client.send(command);
-      log.info(response)
+      await client.send(command);
     } else {
       log.info('Skipped sending failure notification, no SNS topic is configured');
     }

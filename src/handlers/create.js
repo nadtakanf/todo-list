@@ -21,6 +21,6 @@ module.exports.handler = async event => {
         return response.success(metadata.$metadata.httpStatusCode)
     } catch (err) {
         console.log(err)
-        await sns.notifyFailure(err.errorMessage);
+        await sns.notifyFailure(err);
 	}
 };

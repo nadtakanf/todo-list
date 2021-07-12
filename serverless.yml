@@ -14,8 +14,7 @@ provider:
       Fn::ImportValue: ${self:custom.todoSnsStack}:${self:provider.stage}:SNSTargetNotifyForFailedEvents
     TABLE_NAME: ${self:custom.tableName}
     EVENT_BRIDGE: "default"
-    COGNITO_ARN: 
-      Fn::ImportValue: todo-list-cognito:dev:UserPoolArn
+    COGNITO_ARN: ${self:custom.todoCognitoArn}
   iam:
     role:
       statements:
@@ -41,8 +40,10 @@ package:
 
 custom:
   tableName: todo-list-${self:provider.stage}
-  todoCognitoName: ${self:service}-cognito
+  todoCognitoName: ${self:service}-cognito-userpool
   todoSnsStack: todo-list-sns       
+  todoCognitoArn:
+    Fn::ImportValue: ${self:custom.todoCognitoName}:${self:provider.stage}:UserPoolArn
 
 functions:
   catch-all:
@@ -52,7 +53,7 @@ functions:
           path: /{any+} # this matches any path, the token 'any' doesn't mean anything special
           method: ANY     
           authorizer: 
-            arn: arn:aws:cognito-idp:us-west-1:844978381282:userpool/us-west-1_Tmd1WMbrJ
+            arn: arn:aws:cognito-idp:us-west-1:844978381282:userpool/us-west-1_Tmd1WMbrJ	
   
   todo-create:
     handler: src/handlers/create.handler

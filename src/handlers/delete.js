@@ -6,13 +6,18 @@ const util = require('../helper/util')
 module.exports.handler = async event => { 
     try {
         const idObject = util.matchPathElements(event.detail.path, '/delete/{id}')
+
+        // decode jwt to get user object from idToken
+        const idToken = await util.getHeader(headers, 'Authorization');
+        const payload = await util.decodeJWT(idToken, 1);
+        
         const params = {
             Key: {
                 PK: {
-                    S: `USER#${idObject.id}`
+                    S: `USER#${payload['cognito:username']}`
                 },
                 SK: {
-                    S: `TYPE#ITEM1`
+                    S: `ITEM#${idObject.id}`
                 }
             }, 
             TableName: process.env.TABLE_NAME

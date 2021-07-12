@@ -2,22 +2,28 @@
 
 const util = {}
 const tableName = process.env.TABLE_NAME;
-const ulid = require('ulid')
+const ulid = require('ulid');
+const jose = require('node-jose');
+const log = require('lambda-log');
 /**
  * Returns task format object
  * @param {Object} task task to reformat
+ * @return {Object} item object
  */
-util.formatItem = ((task) => {
+util.formatItem = ((task, payload) => {
+    const itemId = ulid.ulid();
     return {
         TableName: tableName,
         Item: {
-            PK: { S : `USER#nadtakan.futhoem` },
-            SK: { S: `ITEM#${ulid.ulid()}` },
+            PK: { S : `USER#${payload['cognito:username']}` },
+            SK: { S: `ITEM#${itemId}` },
+            id: { S: itemId },
             title: { S: task.title },
             description: { S: task.description },
             itemStatus: { S: task.itemStatus },
             dueDate: { S: task.dueDate },
-            user: { S: `User1` } ,// TODO: replace this with cognito user email
+            user: { S: payload['cognito:username'] } ,// TODO: replace this with cognito user email
+            email: { S: payload['email'] },
             createdAt: { S: Date.now().toString() }
         }
     };
@@ -28,6 +34,7 @@ util.formatItem = ((task) => {
  * Returns a list of matches of the given pattern
  * @param {String} string string to match
  * @param {String} pattern pattern
+ * @param {String} maches 
  */
 function getMatches(string, pattern) {
     const regex = new RegExp(pattern, 'g');
@@ -45,7 +52,8 @@ function getMatches(string, pattern) {
    * value is the matched value
    * @param {String} path path
    * @param {String} pathPattern path pattern
-   */
+   * @return {String} match path elements
+*/
 util.matchPathElements = (path, pathPattern) => {
     // find all match tokens
     const tokens = getMatches(pathPattern, '{([^}]+)}');
@@ -67,6 +75,39 @@ util.matchPathElements = (path, pathPattern) => {
     const result = {};
     for (let i = 1; i < match.length; i += 1) {
       result[tokens[i - 1]] = match[i];
+    }
+    return result;
+}
+
+/**
+ * Decode JWT and grabs payload
+ * @param {jwt} jwt JWT token
+ * @param {section} section index 0, 1, 2
+ * @return payload
+ */
+util.decodeJWT = async (jwt, section) => {
+    let payload = null;
+    try {
+        const sections = jwt.split('.');
+        payload = await jose.util.base64url.decode(sections[section])
+        payload = JSON.parse(payload)
+    } catch (e) {
+        log.error('Error getting payload from JWT');
+    }
+    return payload;
+}
+
+/**
+   * Retrieves a header with the given name. The lookup is
+   * case insensitive.
+   * @param {Object} headers headers
+   * @param {String} name header name
+   * @return {String} matching header
+   */
+util.getHeader = async (headers, name) => {
+    let result = headers[name];
+    if (!result) {
+      result = headers[name.toLowerCase()];
     }
     return result;
 }

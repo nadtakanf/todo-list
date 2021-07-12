@@ -3,7 +3,6 @@ const eventbridge = require('../helper/eventbridge');
 const response = require('../helper/response-lib');
 
 module.exports.handler = async event => {
-    console.log(process.env.COGNITO_ARN)
     let err = null;
 	try {
         await eventbridge.sendToEventBridge(process.env.EVENT_BRIDGE, event);

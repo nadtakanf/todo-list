@@ -20,7 +20,7 @@ util.formatItem = ((task, payload) => {
             id: { S: itemId },
             title: { S: task.title },
             description: { S: task.description },
-            itemStatus: { S: task.itemStatus },
+            itemStatus: { S: task.itemStatus.toLowerCase() },
             dueDate: { S: task.dueDate },
             user: { S: payload['cognito:username'] } ,// TODO: replace this with cognito user email
             email: { S: payload['email'] },

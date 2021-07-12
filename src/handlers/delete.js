@@ -2,12 +2,14 @@
 const { DynamoDBClient, DeleteItemCommand } = require("@aws-sdk/client-dynamodb")
 const client = new DynamoDBClient({ region: process.env.REGION })  
 const util = require('../helper/util')
+const sns = require('../helper/sns')
 
 module.exports.handler = async event => { 
     try {
         const idObject = util.matchPathElements(event.detail.path, '/delete/{id}')
 
         // decode jwt to get user object from idToken
+        const { headers } = event.detail;
         const idToken = await util.getHeader(headers, 'Authorization');
         const payload = await util.decodeJWT(idToken, 1);
         
@@ -26,6 +28,6 @@ module.exports.handler = async event => {
         const command = new DeleteItemCommand(params)
         await client.send(command)
     } catch (err) {
-        await sns.notifyFailure(err.errorMessage);
+        await sns.notifyFailure(err);
     }
 };

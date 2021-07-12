@@ -11,11 +11,9 @@ module.exports.handler = async event => {
         const { body } = event.detail;
         const { headers } = event.detail;
 
-        // decode jwt to get user object from idToken
-        const idToken = await util.getHeader(headers, 'Authorization');
-        const payload = await util.decodeJWT(idToken, 1);
+        const { claims } = event.detail.requestContext.authorizer;
 
-        const params = util.formatItem(JSON.parse(body), payload)
+        const params = util.formatItem(JSON.parse(body), claims)
         const command = new PutItemCommand(params);
         const metadata = await client.send(command); 
         return response.success(metadata.$metadata.httpStatusCode)

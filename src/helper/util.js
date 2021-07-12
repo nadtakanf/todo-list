@@ -10,20 +10,20 @@ const log = require('lambda-log');
  * @param {Object} task task to reformat
  * @return {Object} item object
  */
-util.formatItem = ((task, payload) => {
+util.formatItem = ((task, claims) => {
     const itemId = ulid.ulid();
     return {
         TableName: tableName,
         Item: {
-            PK: { S : `USER#${payload['cognito:username']}` },
+            PK: { S : `USER#${claims['cognito:username']}` },
             SK: { S: `ITEM#${itemId}` },
             id: { S: itemId },
             title: { S: task.title },
             description: { S: task.description },
             itemStatus: { S: task.itemStatus.toLowerCase() },
             dueDate: { S: task.dueDate },
-            user: { S: payload['cognito:username'] } ,// TODO: replace this with cognito user email
-            email: { S: payload['email'] },
+            user: { S: claims['cognito:username'] } ,// TODO: replace this with cognito user email
+            email: { S: claims['email'] },
             createdAt: { S: Date.now().toString() }
         }
     };
@@ -75,39 +75,6 @@ util.matchPathElements = (path, pathPattern) => {
     const result = {};
     for (let i = 1; i < match.length; i += 1) {
       result[tokens[i - 1]] = match[i];
-    }
-    return result;
-}
-
-/**
- * Decode JWT and grabs payload
- * @param {jwt} jwt JWT token
- * @param {section} section index 0, 1, 2
- * @return payload
- */
-util.decodeJWT = async (jwt, section) => {
-    let payload = null;
-    try {
-        const sections = jwt.split('.');
-        payload = await jose.util.base64url.decode(sections[section])
-        payload = JSON.parse(payload)
-    } catch (e) {
-        log.error('Error getting payload from JWT');
-    }
-    return payload;
-}
-
-/**
-   * Retrieves a header with the given name. The lookup is
-   * case insensitive.
-   * @param {Object} headers headers
-   * @param {String} name header name
-   * @return {String} matching header
-   */
-util.getHeader = async (headers, name) => {
-    let result = headers[name];
-    if (!result) {
-      result = headers[name.toLowerCase()];
     }
     return result;
 }

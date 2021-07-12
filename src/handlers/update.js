@@ -9,15 +9,12 @@ module.exports.handler = async event => {
         const body = JSON.parse(event.detail.body);
         const idObject = util.matchPathElements(event.detail.path, '/update/{id}')
 
-        // decode jwt to get user object from idToken
-        const { headers } = event.detail;
-        const idToken = await util.getHeader(headers, 'Authorization');
-        const payload = await util.decodeJWT(idToken, 1);
+        const { claims } = event.detail.requestContext.authorizer;
 
         const params = {
             TableName: process.env.TABLE_NAME,
             Key: {
-                PK: { S: `USER#${payload['cognito:username']}` },
+                PK: { S: `USER#${claims['cognito:username']}` },
                 SK: { S: `ITEM#${idObject.id}` }
             },
             UpdateExpression: "SET title = :title, description = :description, itemStatus = :itemStatus, dueDate = :dueDate",

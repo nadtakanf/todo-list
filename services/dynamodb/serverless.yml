@@ -21,9 +21,9 @@ resources:
             AttributeType: S
           - AttributeName: SK
             AttributeType: S
-          - AttributeName: GSI1PK
+          - AttributeName: itemStatus
             AttributeType: S
-          - AttributeName: GSI1SK
+          - AttributeName: dueDate
             AttributeType: S
         KeySchema:
           - AttributeName: PK
@@ -34,11 +34,22 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         GlobalSecondaryIndexes:
-          - IndexName: 'GSI1'
+          - IndexName: 'itemStatusGSI'
             KeySchema:
-            - AttributeName: "GSI1PK"
+            - AttributeName: itemStatus
               KeyType: "HASH"
-            - AttributeName: "GSI1SK"
+            - AttributeName: PK
+              KeyType: "RANGE"
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput: 
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+          - IndexName: 'dueDateGSI2'
+            KeySchema:
+            - AttributeName: dueDate
+              KeyType: "HASH"
+            - AttributeName: PK
               KeyType: "RANGE"
             Projection:
               ProjectionType: ALL

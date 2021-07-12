@@ -32,6 +32,11 @@ provider:
             - events:PutEvents
             - events:listEventBuses
           Resource: !Sub arn:aws:events:${AWS::Region}:${AWS::AccountId}:event-bus/*
+        - Effect: Allow
+          Action: 
+            - sns:Publish
+          Resource: 
+            - Fn::ImportValue: ${self:custom.todoSnsStack}:${self:provider.stage}:SNSTargetNotifyForFailedEvents
 
 package:
   patterns:
@@ -41,7 +46,7 @@ package:
 custom:
   tableName: todo-list-${self:provider.stage}
   todoCognitoName: ${self:service}-cognito-userpool
-  todoSnsStack: todo-list-sns       
+  todoSnsStack: todo-list-sns     
   todoCognitoArn:
     Fn::ImportValue: ${self:custom.todoCognitoName}:${self:provider.stage}:UserPoolArn
 

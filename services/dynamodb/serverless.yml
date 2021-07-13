@@ -1,0 +1,61 @@
+service: todo-list-dynamodb
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  profile: nadtakan
+  stage: ${opt:stage, "dev"}
+  region: ${opt:region, "us-west-1"}
+
+custom:
+  tableName: todo-list-${self:provider.stage}
+
+resources:
+  Resources:
+    todoTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tableName}
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+          - AttributeName: itemStatus
+            AttributeType: S
+          - AttributeName: dueDate
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: 'itemStatusGSI'
+            KeySchema:
+            - AttributeName: itemStatus
+              KeyType: "HASH"
+            - AttributeName: PK
+              KeyType: "RANGE"
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput: 
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+          - IndexName: 'dueDateGSI2'
+            KeySchema:
+            - AttributeName: dueDate
+              KeyType: "HASH"
+            - AttributeName: PK
+              KeyType: "RANGE"
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput: 
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+        Tags:
+          - Key: Name
+            Value: ${self:service}-${self:provider.region}

@@ -1,5 +1,4 @@
 service: todo-list
-frameworkVersion: '2'
 
 provider:
   name: aws
@@ -8,52 +7,103 @@ provider:
   region: ${opt:region, "us-west-1"}
   logs:
     restApi: true
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-        - dynamodb:Scan
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-      Resource: !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${self:custom.tableName}
+  lambdaHashingVersion: 20201221
+  environment:
+    REGION: ${self:provider.region}
+    FAILURE_SNS: 
+      Fn::ImportValue: ${self:custom.sns.todoSnsStack}:${self:provider.stage}:SNSTargetNotifyForFailedEvents
+    TABLE_NAME: ${self:custom.dynamodb.tableName}
+    EVENT_BRIDGE: "default"
+    COGNITO_ARN: ${self:custom.cognito.todoUserPoolId}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: 
+            - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${self:custom.dynamodb.tableName}
+            - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${self:custom.dynamodb.tableName}/index/*
+        - Effect: Allow
+          Action: 
+            - events:PutEvents
+            - events:listEventBuses
+          Resource: !Sub arn:aws:events:${AWS::Region}:${AWS::AccountId}:event-bus/*
+        - Effect: Allow
+          Action: 
+            - sns:Publish
+          Resource: 
+            - Fn::ImportValue: ${self:custom.sns.todoSnsStack}:${self:provider.stage}:SNSTargetNotifyForFailedEvents
 
 package:
-  individually: true
+  patterns:
+    - '!resources/**'
+    - '!mocks/**'
 
 custom:
-  tableName: todo-list-${self:provider.stage}
-  todoCognitoName: ${self:service}-cognito
+  dynamodb:
+    tableName: todo-list-${self:provider.stage}
+  cognito:
+    todoCognitoName: ${self:service}-cognito-userpool
+    todoCognitoClientId: ${file(./temp.yml):COGNITO_CLIENT_ID}
+    todoUserPoolId: ${file(./temp.yml):COGNITO_USER_POOL_ID}
+  sns:
+    todoSnsStack: todo-list-sns     
 
 functions:
-  todo-create:
-    handler: src/create.handler
+  catch-all:
+    handler: src/handlers/catch-all.handler
     events:
       - http:
-          path: /create
-          method: post
-
-  # todo-update:
-  #   handler: update.handler
-  #   events:
-  #     - http:
-  #         path: /update/{id}
-  #         method: put
-
-  # todo-delete:
-  #   handler: delete.handler
-  #   events:
-  #     - http:
-  #         path: /delete/{id}
-  #         method: delete
+          path: /{any+} # this matches any path, the token 'any' doesn't mean anything special
+          method: ANY     
+          authorizer: 
+            arn: arn:aws:cognito-idp:us-west-1:844978381282:userpool/${self:custom.cognito.todoUserPoolId}
   
-  # todo-search:
-  #   handler: search.handler
-  #   events:
-  #     - http:
-  #         path: /search
-  #         method: get
+  todo-create:
+    handler: src/handlers/create.handler
+    events:
+      - eventBridge:
+          pattern:
+            source: # rule
+              - source.events
+            detail-type:
+              - create
+
+  todo-update:
+    handler: src/handlers/update.handler
+    events:
+      - eventBridge:
+          pattern:
+            source: # rule
+              - source.events
+            detail-type:
+              - update
+
+  todo-delete:
+    handler: src/handlers/delete.handler
+    events:
+      - eventBridge:
+          pattern:
+            source: # rule
+              - source.events
+            detail-type:
+              - delete
+  
+  todo-search:
+    handler: src/handlers/search.handler
+    events:
+      - eventBridge:
+          pattern:
+            source: # rule
+              - source.events
+            detail-type:
+              - search
 
 plugins:
   - serverless-webpack

@@ -4,7 +4,9 @@
   "description": "This is an API backend for to do list app.",
   "main": "webpack.config.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "remove:dev": "sls remove -v --stage dev --aws-profile nadtakan",
+    "deploy:dev": "sls deploy -v --stage dev --aws-profile nadtakan"
   },
   "repository": {
     "type": "git",
@@ -17,8 +19,15 @@
   },
   "homepage": "https://github.com/nadtakanf/todo-list#readme",
   "devDependencies": {
+    "@aws-sdk/client-eventbridge": "^3.21.0",
+    "@aws-sdk/client-sns": "^3.21.0",
     "serverless": "^2.51.0",
     "serverless-webpack": "^5.5.1",
     "webpack": "^5.43.0"
+  },
+  "dependencies": {
+    "lambda-log": "^3.0.0",
+    "node-jose": "^2.0.0",
+    "ulid": "^2.3.0"
   }
 }

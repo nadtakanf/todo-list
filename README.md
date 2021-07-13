@@ -84,10 +84,14 @@ Before we start, let install those plugin to make it happen!
 1. create a user on cognito console
 
 2. Change password after create a user, otherwise you won't be able to get token API CLI
+```sh
 aws cognito-idp admin-set-user-password --user-pool-id <user_pool_id> --username <username> --password <password> --profile <aws-profile> --region us-west-1 --permanent
+```
 
 3. Run command below on your terminal to get jwt access token
+```sh
 aws cognito-idp admin-initiate-auth --user-pool-id <user_pool_id> --client-id <client_id>" --auth-flow ADMIN_NO_SRP_AUTH --auth-parameters USERNAME="<username>",PASSWORD="<password>" --profile <aws-profile> --region us-west-1
+```
 
 4. Copy idToken and use that on postman header name Authorization
 

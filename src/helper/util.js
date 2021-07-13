@@ -3,8 +3,6 @@
 const util = {}
 const tableName = process.env.TABLE_NAME;
 const ulid = require('ulid');
-const jose = require('node-jose');
-const log = require('lambda-log');
 /**
  * Returns task format object
  * @param {Object} task task to reformat
@@ -25,7 +23,8 @@ util.formatItem = ((task, claims) => {
             user: { S: claims['cognito:username'] } ,// TODO: replace this with cognito user email
             email: { S: claims['email'] },
             createdAt: { S: Date.now().toString() }
-        }
+        },
+        ConditionExpression: "attribute_not_exists(PK)"
     };
     
 })

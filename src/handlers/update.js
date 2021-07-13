@@ -25,6 +25,7 @@ module.exports.handler = async event => {
                 ":dueDate": { S: body.dueDate }
             },
             ReturnValues: "UPDATED_NEW",
+            ConditionExpression: "attribute_exists(PK)"
         };
         const command = new UpdateItemCommand(params);
         await ddbClient.send(command);

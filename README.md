@@ -23,10 +23,7 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
@@ -37,23 +34,13 @@
 
 <img src="/images/todo-arch-diagram.png"/>
 
-There are many great README templates available on GitHub, however, I didn't find one that really suit my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
-
-Here's why:
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should element DRY principles to the rest of your life :smile:
-
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue. Thanks to all the people have have contributed to expanding this template!
-
-A list of commonly used resources that I find helpful are listed in the acknowledgements.
+This project is creating for a todo list backend API hosting on AWS Cloud that 100% Serverless.
 
 ### Todo API Sequence Diagram
 <img src="/images/sequence-diagram-todolist.png"/>
 
 ### Built With
-
-This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
+This project is built with technologiest as below.
 * [Serverless Framework](https://www.serverless.com/)
 * [NodeJS](https://nodejs.org/en/)
 * [DynamoDB](https://aws.amazon.com/dynamodb/)
@@ -72,34 +59,40 @@ This section should list any major frameworks that you built your project using.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+Before we start, let install those plugin to make it happen!
+* [AWS CLI V2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
+* [Serverless Framework](https://www.serverless.com/framework/docs/getting-started/)
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Clone the repo
    ```sh
-   git clone https://github.com/your_username_/Project-Name.git
+   git clone https://github.com/nadtakanf/todo-list.git
    ```
-3. Install NPM packages
+2. Install NPM packages
    ```sh
    npm install
    ```
-4. Enter your API in `config.js`
-   ```JS
-   const API_KEY = 'ENTER YOUR API';
+3. Deploy to AWS environment
+   ```sh
+   sls deploy -v --stage <stage> --aws-profile <aws-profile>
    ```
 
 <!-- USAGE EXAMPLES -->
-## Usage
+## Getting JWT Token from Cognito
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+1. create a user on cognito console
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+2. Change password after create a user, otherwise you won't be able to get token API CLI
+aws cognito-idp admin-set-user-password --user-pool-id <user_pool_id> --username <username> --password <password> --profile <aws-profile> --region us-west-1 --permanent
+
+3. Run command below on your terminal to get jwt access token
+aws cognito-idp admin-initiate-auth --user-pool-id <user_pool_id> --client-id <client_id>" --auth-flow ADMIN_NO_SRP_AUTH --auth-parameters USERNAME="<username>",PASSWORD="<password>" --profile <aws-profile> --region us-west-1
+
+4. Copy idToken and use that on postman header name Authorization
+
+[doc](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cognito-idp/admin-set-user-password.html)
+
 
 <!-- ROADMAP -->
 ## Roadmap

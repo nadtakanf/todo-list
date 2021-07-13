@@ -95,9 +95,6 @@ aws cognito-idp admin-initiate-auth --user-pool-id <user_pool_id> --client-id <c
 
 4. Copy idToken and use that on postman header name Authorization
 
-[doc](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cognito-idp/admin-set-user-password.html)
-
-
 <!-- ROADMAP -->
 ## Roadmap
 
@@ -112,7 +109,8 @@ Project Link: [https://github.com/nadtakanf/todo-list](https://github.com/nadtak
 
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
-* [AWS WAF](https://aws.amazon.com/waf/#:~:text=AWS%20WAF%20is%20a%20web,security%2C%20or%20consume%20excessive%20resources.)
-* [Route 53](https://connoratherton.com/loaders)
+* [AWS WAF](https://aws.amazon.com/waf)
+* [Route 53](https://aws.amazon.com/route53/)
 * [CloudFront](https://aws.amazon.com/cloudfront/)
 * [Decoupling serverless workloads with Amazon EventBridge](https://www.youtube.com/watch?v=VI79XQW4dIM)
+* [Cognito JWT Token](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cognito-idp/admin-set-user-password.html)

@@ -5,6 +5,11 @@ provider:
   name: aws
   stage: ${opt:stage, "dev"}
   region: ${opt:region, "us-west-1"}
+  environment:
+    REGION: ${self:provider.region}
+    FAILURE_SNS: 
+      Fn::ImportValue: ${self:custom.sns.todoSnsStack}:${self:provider.stage}:SNSTargetNotifyForFailedEvents
+    TABLE_NAME: ${self:custom.dynamodb.tableName}
   iam:
     role:
       statements:
@@ -12,16 +17,26 @@ provider:
           Action:
             - dynamodb:PutItem
           Resource: 
-            - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${self:custom.tableName}
-            - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${self:custom.tableName}/index/*
+            - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${self:custom.dynamodb.tableName}
+        - Effect: Allow
+          Action: 
+            - sns:Publish
+          Resource: 
+            - Fn::ImportValue: ${self:custom.sns.todoSnsStack}:${self:provider.stage}:SNSTargetNotifyForFailedEvents
+
+package:
+  patterns:
+    - '!script/**'    
 
 functions:
   cognitoEventTriggers:
     handler: handlers/cognitoTriggers.handler
 
 custom:
-  tableName: todo-list-${self:provider.stage}
-  todoSnsStack: todo-list-sns
+  dynamodb:
+    tableName: todo-list-${self:provider.stage}
+  sns:
+    todoSnsStack: todo-list-sns
 
 resources:
   Resources:

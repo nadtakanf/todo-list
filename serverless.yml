@@ -14,7 +14,7 @@ provider:
       Fn::ImportValue: ${self:custom.sns.todoSnsStack}:${self:provider.stage}:SNSTargetNotifyForFailedEvents
     TABLE_NAME: ${self:custom.dynamodb.tableName}
     EVENT_BRIDGE: "default"
-    COGNITO_ARN: ${self:custom.sns.}
+    COGNITO_ARN: ${self:custom.cognito.todoUserPoolId}
   iam:
     role:
       statements:
@@ -27,8 +27,8 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
           Resource: 
-            - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${self:custom.tableName}
-            - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${self:custom.tableName}/index/*
+            - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${self:custom.dynamodb.tableName}
+            - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${self:custom.dynamodb.tableName}/index/*
         - Effect: Allow
           Action: 
             - events:PutEvents
@@ -38,7 +38,7 @@ provider:
           Action: 
             - sns:Publish
           Resource: 
-            - Fn::ImportValue: ${self:custom.todoSnsStack}:${self:provider.stage}:SNSTargetNotifyForFailedEvents
+            - Fn::ImportValue: ${self:custom.sns.todoSnsStack}:${self:provider.stage}:SNSTargetNotifyForFailedEvents
 
 package:
   patterns:

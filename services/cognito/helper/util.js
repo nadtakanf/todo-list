@@ -21,7 +21,8 @@ util.formatUser = ((event) => {
             phoneNumber: { S: phone_number },
             phoneNumberVefified: { BOOL: Boolean(phone_number_verified) },
             createdAt: { S: Date.now().toString() }
-        }
+        },
+        ConditionExpression: "attribute_not_exists(PK)"
     };
 })
 

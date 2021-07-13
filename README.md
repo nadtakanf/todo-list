@@ -31,12 +31,12 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
-<img src="/images/todo-arch-diagram.png"/>
-
 This project is creating for a todo list backend API hosting on AWS Cloud that 100% Serverless.
 
-### Todo API Sequence Diagram
+#### Todo API Architecture Diagram
+<img src="/images/todo-arch-diagram.png"/>
+
+#### Todo API Sequence Diagram
 <img src="/images/sequence-diagram-todolist.png"/>
 
 ### Built With
@@ -90,7 +90,7 @@ aws cognito-idp admin-set-user-password --user-pool-id <user_pool_id> --username
 
 3. Run command below on your terminal to get jwt access token
 ```sh
-aws cognito-idp admin-initiate-auth --user-pool-id <user_pool_id> --client-id <client_id>" --auth-flow ADMIN_NO_SRP_AUTH --auth-parameters USERNAME="<username>",PASSWORD="<password>" --profile <aws-profile> --region us-west-1
+aws cognito-idp admin-initiate-auth --user-pool-id <user_pool_id> --client-id "<client_id>" --auth-flow ADMIN_NO_SRP_AUTH --auth-parameters USERNAME="<username>",PASSWORD="<password>" --profile <aws-profile> --region us-west-1
 ```
 
 4. Copy idToken and use that on postman header name Authorization

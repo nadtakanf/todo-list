@@ -103,7 +103,7 @@ See the [open issues](https://trello.com/b/GVyty9tX/todo-web-development) for a 
 <!-- CONTACT -->
 ## Contact
 
-Nadtakan Futhoem - [@nadtakanf](https://twitter.com/NadtakanF) - nadtakan.futhoem@gmail.com - [Medium] (https://nadtakan-futhoem.medium.com/)
+Nadtakan Futhoem - [@nadtakanf](https://twitter.com/NadtakanF) - nadtakan.futhoem@gmail.com - [Medium](https://nadtakan-futhoem.medium.com/)
 
 Project Link: [https://github.com/nadtakanf/todo-list](https://github.com/nadtakanf/todo-list)
 

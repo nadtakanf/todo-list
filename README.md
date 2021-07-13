@@ -32,11 +32,12 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
+#### Todo API Architecture Diagram
 <img src="/images/todo-arch-diagram.png"/>
 
 This project is creating for a todo list backend API hosting on AWS Cloud that 100% Serverless.
 
-### Todo API Sequence Diagram
+#### Todo API Sequence Diagram
 <img src="/images/sequence-diagram-todolist.png"/>
 
 ### Built With

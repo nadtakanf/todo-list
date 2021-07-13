@@ -65,7 +65,7 @@ Before we start, let install those plugin to make it happen!
 
 ### Installation
 
-1. Clone the repo
+1. Clone the repo to your local
    ```sh
    git clone https://github.com/nadtakanf/todo-list.git
    ```
